@@ -8,13 +8,15 @@
 # 1. Project Overview
 
 ## Project Title
-[Write your project title here]
+Tournament Summative Crit. B & C
 
 ## Project Description
-[Briefly explain what the project is about]
+I’m building a scoring app for a college tournament. The college is running this big event with 5 different challenges—everything from sports to academic stuff.
+
+My job is to make a program that keeps track of everyone's points so the judges don't have to do it by hand on a messy spreadsheet.
 
 ## Start Date
-[Unknown / add later]
+30 March 2026
 
 ## Target End Date
 [Unknown / add later]
