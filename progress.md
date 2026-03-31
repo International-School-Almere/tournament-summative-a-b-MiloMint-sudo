@@ -33,9 +33,9 @@ My job is to make a program that keeps track of everyone's points so the judges 
 
 ---
 ## Session [01]
-**Date:** [Add date later]  
-**Time spent:** [e.g. 45 min / 2 hours]  
-**Focus:** [What did you work on?]
+**Date:** 31st March 2026  
+**Time spent:** 15 min  
+**Focus:** Initializing the Python Environment and UI Framework.
 
 ### Problems / Challenges
 - 
@@ -46,8 +46,28 @@ My job is to make a program that keeps track of everyone's points so the judges 
 - 
 
 ### Evidence
-- [Added code]
-- [Updated design]
+- Added code: 
+"import tkinter as tk 
+import os 
+from tkinter import messagebox
+#-------------GUI-------------
+screen = tk.Tk()
+screen.title("Ron's College Tournament App")
+screen.geometry("1450x900")
+screen.minsize(800, 500)
+
+#-------------School logo / logo------------
+
+#-------------Pages-------------
+home_page = tk.Frame(screen)
+leaderboard_page = tk.Frame(screen)
+participant_page = tk.Frame(screen)
+sign_up_page = tk.Frame(screen)
+
+#-------------Buttons-------------
+screen.mainloop()"
+
+- [Updated design] 
 - [Created sketch]
 - [Researched source]
 - [Uploaded image/screenshot]
