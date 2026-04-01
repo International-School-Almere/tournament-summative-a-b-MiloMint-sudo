@@ -80,20 +80,49 @@ screen.mainloop()"
 ---
 
 ## Session [02]
-**Date:** [Add date later]  
-**Time spent:** [e.g. 45 min / 2 hours]  
-**Focus:** [What did you work on?]
+**Date:** 1st April 2026  
+**Time spent:** 45 min  
+**Focus:** This code sets up a navigation menu with buttons that allow the user to switch between the different "pages" (frames) of your tournament app using a grid layout and a switching function.
 
 ### Problems / Challenges
-- 
+- At first my buttons were stuck on the left side and refused to go to the center of the app. 
 - 
 
 ### Solutions / Actions Taken
-- 
+- I asked Chatgpt to help me and it said I needed to use a "columnconfigure" which fixed part of the problem. (Its not perfectly in the middle but its somewhat in the middle so Im happy.)
 - 
 
 ### Evidence
-- [Added code]
+- Added code:
+home_button = tk.Button(screen, text="Home")
+leaderboard_button = tk.Button(screen, text="Leaderboard")
+participant_button = tk.Button(screen, text="Participants")
+sign_up_button = tk.Button(screen, text="Sign Up")
+
+screen.columnconfigure(0, weight=1)
+screen.columnconfigure(1, weight=0)
+screen.columnconfigure(2, weight=0)
+screen.columnconfigure(3, weight=0)
+screen.columnconfigure(4, weight=0)
+screen.columnconfigure(5, weight=1)
+
+home_button.grid(row=0, column=1, padx=10, pady=10)
+leaderboard_button.grid(row=0, column=2, padx=10, pady=10)
+participant_button.grid(row=0, column=3, padx=10, pady=10)
+sign_up_button.grid(row=0, column=4, padx=10, pady=10)
+
+def show_frame(frame):
+    frame.tkraise()
+    home_button.config(command=lambda: show_frame(home_page))
+    leaderboard_button.config(command=lambda: show_frame(leaderboard_page))
+    participant_button.config(command=lambda: show_frame(participant_page))
+    sign_up_button.config(command=lambda: show_frame(sign_up_page))
+
+    tk.Label(home_page, text="Home").grid()
+    tk.Label(leaderboard_page, text="Leaderboard").grid()
+    tk.Label(participant_page, text="Participants").grid()
+    tk.Label(sign_up_page, text="Sign Up").grid() 
+
 - [Updated design]
 - [Created sketch]
 - [Researched source]
@@ -101,8 +130,11 @@ screen.mainloop()"
 
 ### Reflection
 - What went well?
+    I think I was able to create the buttons and the layout for them really well. Using grid made it much easier to keep the spacing consistent across the top of the app.
 - What needs improvement?
+    I need to make sure the buttons are up to my standard, so I want to refine the centering. 
 - What did I learn?
+
 
 ---
 ## Session [02]
