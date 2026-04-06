@@ -48,4 +48,8 @@ def show_frame(frame):
     tk.Label(participant_page, text="Participants").grid()
     tk.Label(sign_up_page, text="Sign Up").grid() 
 
-screen.mainloop() 
+from signuppage import sign_up
+sign_up()
+
+
+screen.mainloop()
