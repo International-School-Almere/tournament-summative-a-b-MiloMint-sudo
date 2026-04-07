@@ -64,4 +64,3 @@ group_radio = Radiobutton(screen, text="Group", variable=group, value="Group", c
 group_radio.grid(row=7, column=0)
 individual_radio = Radiobutton(screen, text="Individual", variable=individual, value="Individual", command=clicked)
 individual_radio.grid(row=7, column=1)
-
