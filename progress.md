@@ -197,7 +197,7 @@ def sign_up():
        
 - [Updated design]
 - [Created sketch]
-- [Researched source]
+- Radio buttons (Basically checkboxes but only can check one off.)
 - [Uploaded image/screenshot]
 
 ### Reflection
@@ -240,6 +240,31 @@ game_play = "blah blah blah"
 game_play_display = tk.Label(screen, text=game_play, font=("Helvetica", 13), justify="left", wraplength=200)
 game_play_display.grid(row=2, pady=5, column=3, padx=15, sticky="n")
 
+- [Updated design] 
+- [Created sketch]
+- [Researched source]
+- [Uploaded image/screenshot]
+
+### Reflection
+- What went well?
+- What needs improvement?
+- What did I learn?
+
+## Session [05]
+**Date:** 10 April 2026  
+**Time spent:** 45 min  
+**Focus:** Implement home page layout and sign-up functionality in the tournament app
+
+### Problems / Challenges
+- My program did NOT want to put the home screen on display in my main code if I connected one to the other. It refused to do anything.
+- 
+
+### Solutions / Actions Taken
+- My solution was putting the homepage code into the main code. 
+- 
+
+### Evidence
+- Added code: The homepage code into the main code (nothing new added)
 - [Updated design] 
 - [Created sketch]
 - [Researched source]
