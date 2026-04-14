@@ -22,22 +22,26 @@ def show_home_page():
     container.columnconfigure(0, weight=1)
 
     Home_page_title = tk.Label(container, text="Ron's college 2026 Sports and Academic Tournament", font=("Helvetica", 20))
-    Home_page_title.grid(pady=20, column=0, columnspan=4, padx=25)
+    Home_page_title.grid(pady=15, column=0, columnspan=4, padx=25)
     Home_page_title.config(anchor="center")
 
     rules_text_title = tk.Label(container, text="Tournament Rules", font=("Helvetica", 21))
-    rules_text_title.grid(row=1, column=2, pady=10, padx=10, sticky="w")
+    rules_text_title.grid(row=1, column=1, pady=10, padx=10)
+    rules_text_title.config(anchor="center")
 
     rules_text = "1. Respect all participants\n2. Follow the rules\n3. Have fun!"
     rules_display = tk.Label(container, text=rules_text, font=("Helvetica", 16), justify="left", wraplength=200)
-    rules_display.grid(row=2, pady=5, column=2, padx=15, sticky="n")
+    rules_display.grid(row=2, pady=5, column=1, padx=15)
+    rules_display.config(anchor="center")
 
     game_play_title = tk.Label(container, text="How the games will work", font=("Helvetica", 21), wraplength=170)
-    game_play_title.grid(row=1, column=3, pady=10, padx=10, sticky="w")
+    game_play_title.grid(row=1, column=2, pady=10, padx=10)
+    game_play_title.config(anchor="center")
 
     game_play = "blah blah blah"
     game_play_display = tk.Label(container, text=game_play, font=("Helvetica", 16), justify="left", wraplength=200)
-    game_play_display.grid(row=2, pady=5, column=3, padx=15, sticky="n")
+    game_play_display.grid(row=2, pady=5, column=2, padx=15)
+    game_play_display.config(anchor="center")
 
 def show_leaderboard_page():
     for widget in container.winfo_children():
@@ -60,12 +64,26 @@ def show_participant_page():
 def show_sign_up_page():
     for widget in container.winfo_children():
         widget.destroy()
-    container.grid(row=1, column=0, columnspan=6, sticky="nsew")
     container.columnconfigure(0, weight=1)
 
     sign_up_page = tk.Label(container, text="Sign Up", font=("Helvetica", 20))
-    sign_up_page.grid(pady=20, column=1, padx=25, sticky="n")
+    sign_up_page.grid(pady=20, column=1, padx=25,)
     sign_up_page.config(anchor="center")
+
+    participant_year_group = tk.Label(container, text="Year Group:", font=("Helvetica", 16))
+    participant_year_group.grid(row=1, column=0, pady=10, padx=5)
+    year_group_entry = tk.Entry(container, font=("Helvetica", 16))
+    year_group_entry.grid(row=1, column=1, pady=10, padx=5)
+
+    participant_name = tk.Label(container, text="First Name:", font=("Helvetica", 16))
+    participant_name.grid(row=2, column=0, pady=10, padx=5)
+    name_entry = tk.Entry(container, font=("Helvetica", 16))
+    name_entry.grid(row=2, column=1, pady=10, padx=5)
+
+    participant_last_name = tk.Label(container, text="Last Name:", font=("Helvetica", 16))
+    participant_last_name.grid(row=3, column=0, pady=10, padx=5)
+    last_name_entry = tk.Entry(container, font=("Helvetica", 16))
+    last_name_entry.grid(row=3, column=1, pady=10, padx=5)
 
     def clicked():
         my_label.config(text=f'You selected event is: {radvar.get()}.')
@@ -73,17 +91,32 @@ def show_sign_up_page():
     radvar = StringVar()
     radvar.set("Basketball")
 
+    sports_title = tk.Label(container, text="Select a sport:", font=("Helvetica", 16))
+    sports_title.grid(row=4, column=1, pady=10, padx=5)
+
     sport1 = Radiobutton(container, text="Basketball", variable=radvar, value="Basketball", command=clicked)
-    sport1.grid(pady=10, column=1, padx=5, row=1)
+    sport1.grid(pady=10, column=1, padx=5, row=5)
 
     sport2 = Radiobutton(container, text="Soccer", variable=radvar, value="Soccer", command=clicked)
-    sport2.grid(pady=10, column=2, padx=5, row=1)
+    sport2.grid(pady=10, column=1, padx=5, row=6)
 
     sport3 = Radiobutton(container, text="Tennis", variable=radvar, value="Tennis", command=clicked)
-    sport3.grid(pady=10, column=3, padx=5, row=1)
+    sport3.grid(pady=10, column=1, padx=5, row=7)
+
+    academic_title = tk.Label(container, text="Select an academic event:", font=("Helvetica", 16))
+    academic_title.grid(row=4, column=2, pady=10, padx=5)
+
+    academic1 = Radiobutton(container, text="Maths", variable=radvar, value="Maths", command=clicked)
+    academic1.grid(pady=10, column=2, padx=5, row=5)
+
+    academic2 = Radiobutton(container, text="Physics", variable=radvar, value="Physics", command=clicked)
+    academic2.grid(pady=10, column=2, padx=5, row=6)
+
+    academic3 = Radiobutton(container, text="History", variable=radvar, value="History", command=clicked)
+    academic3.grid(pady=10, column=2, padx=5, row=7)
 
     my_label = Label(container, text=" ", font=("Helvetica", 16))
-    my_label.grid(pady=10)
+    my_label.grid(row=8, column=1, pady=10)
 
 #-------------Buttons-------------
 home_button = tk.Button(screen, text="Home", command = show_home_page)
