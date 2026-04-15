@@ -275,7 +275,7 @@ game_play_display.grid(row=2, pady=5, column=3, padx=15, sticky="n")
 - What needs improvement?
 - What did I learn?
 
-## Session [05]
+## Session [06]
 **Date:** 14 April 2026  
 **Time spent:** 1 hour  
 **Focus:** Refactor home and sign-up pages: adjust layout, improve alignment, and add participant input fields for first name, last name, and year group.
@@ -289,7 +289,58 @@ game_play_display.grid(row=2, pady=5, column=3, padx=15, sticky="n")
 - 
 
 ### Evidence
-- Added code: The homepage code into the main code (nothing new added)
+- Added code: 
+- [Updated design] 
+- [Created sketch]
+- [Researched source]
+- [Uploaded image/screenshot]
+
+### Reflection
+- What went well?
+- What needs improvement?
+- What did I learn?
+
+## Session [07]
+**Date:** 15 April 2026  
+**Time spent:** 1 hour  
+**Focus:** Refactor sign-up page: improve layout, add event selection options, and include team name dropdown.
+
+### Problems / Challenges
+- 
+- 
+
+### Solutions / Actions Taken
+- 
+- 
+
+### Evidence
+- Added code: 
+ group_var = StringVar()
+    group_var.set("Group")
+
+    group_title = tk.Label(container, text="Group:", font=("Helvetica", 16))
+    group_title.grid(row=9, column=0, pady=10, padx=5)
+
+    individual_title = tk.Label(container, text="Individual:", font=("Helvetica", 16))
+    individual_title.grid(row=9, column=1, pady=10, padx=5)
+
+    group = Radiobutton(container, text="Group", variable=group_var, value="Group", command=clicked)
+    group.grid(row=10, column=0, pady=10, padx=5)
+
+    team_name_label = tk.Label(container, text="Team Name:", font=("Helvetica", 16))
+    team_name_label.grid(row=11, column=0, pady=10, padx=5)
+
+    individual = Radiobutton(container, text="Individual", variable=group_var, value="Individual", command=clicked)
+    individual.grid(row=10, column=1, pady=10, padx=5)
+
+    teamnames = ["Team name 1", 
+                 "Team name 2", 
+                 "Team name 3", 
+                 "Team name 4"]
+
+    dropdown = tk.OptionMenu(container, group_var, value=teamnames)
+    dropdown.grid(row=12, column=0, pady=10, padx=5)
+
 - [Updated design] 
 - [Created sketch]
 - [Researched source]
