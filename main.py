@@ -14,7 +14,7 @@ school_name_label.grid(pady=20, column=0, padx=25, sticky="nw")
 
 container = tk.Frame(screen)
 container.configure(bg="white")
-container.grid(row=1, column=0, columnspan=6, sticky="nsew")
+container.grid(row=1, column=0, columnspan=6)
 
 def show_home_page():
     for widget in container.winfo_children():
@@ -62,6 +62,10 @@ def show_participant_page():
     participant_page.config(anchor="center")
 
 def show_sign_up_page():
+    
+    def clicked():
+        my_label.config(text=f'You selected event is: {event_var.get()}.')
+
     for widget in container.winfo_children():
         widget.destroy()
     container.columnconfigure(0, weight=1)
@@ -85,38 +89,62 @@ def show_sign_up_page():
     last_name_entry = tk.Entry(container, font=("Helvetica", 16))
     last_name_entry.grid(row=3, column=1, pady=10, padx=5)
 
-    def clicked():
-        my_label.config(text=f'You selected event is: {radvar.get()}.')
-
-    radvar = StringVar()
-    radvar.set("Basketball")
+    event_var = StringVar()
+    event_var.set("Basketball")
 
     sports_title = tk.Label(container, text="Select a sport:", font=("Helvetica", 16))
-    sports_title.grid(row=4, column=1, pady=10, padx=5)
+    sports_title.grid(row=4, column=0, pady=10, padx=5)
 
-    sport1 = Radiobutton(container, text="Basketball", variable=radvar, value="Basketball", command=clicked)
-    sport1.grid(pady=10, column=1, padx=5, row=5)
+    sport1 = Radiobutton(container, text="Basketball", variable=event_var, value="Basketball", command=clicked)
+    sport1.grid(pady=10, column=0, padx=5, row=5)
 
-    sport2 = Radiobutton(container, text="Soccer", variable=radvar, value="Soccer", command=clicked)
-    sport2.grid(pady=10, column=1, padx=5, row=6)
+    sport2 = Radiobutton(container, text="Soccer", variable=event_var, value="Soccer", command=clicked)
+    sport2.grid(pady=10, column=0, padx=5, row=6)
 
-    sport3 = Radiobutton(container, text="Tennis", variable=radvar, value="Tennis", command=clicked)
-    sport3.grid(pady=10, column=1, padx=5, row=7)
+    sport3 = Radiobutton(container, text="Tennis", variable=event_var, value="Tennis", command=clicked)
+    sport3.grid(pady=10, column=0, padx=5, row=7)
 
     academic_title = tk.Label(container, text="Select an academic event:", font=("Helvetica", 16))
-    academic_title.grid(row=4, column=2, pady=10, padx=5)
+    academic_title.grid(row=4, column=1, pady=10, padx=5)
 
-    academic1 = Radiobutton(container, text="Maths", variable=radvar, value="Maths", command=clicked)
-    academic1.grid(pady=10, column=2, padx=5, row=5)
+    academic1 = Radiobutton(container, text="Maths", variable=event_var, value="Maths", command=clicked)
+    academic1.grid(pady=10, column=1, padx=5, row=5)
 
-    academic2 = Radiobutton(container, text="Physics", variable=radvar, value="Physics", command=clicked)
-    academic2.grid(pady=10, column=2, padx=5, row=6)
+    academic2 = Radiobutton(container, text="Physics", variable=event_var, value="Physics", command=clicked)
+    academic2.grid(pady=10, column=1, padx=5, row=6)
 
-    academic3 = Radiobutton(container, text="History", variable=radvar, value="History", command=clicked)
-    academic3.grid(pady=10, column=2, padx=5, row=7)
+    academic3 = Radiobutton(container, text="History", variable=event_var, value="History", command=clicked)
+    academic3.grid(pady=10, column=1, padx=5, row=7)
 
-    my_label = Label(container, text=" ", font=("Helvetica", 16))
+    my_label = Label(container, text="", font=("Helvetica", 16))
     my_label.grid(row=8, column=1, pady=10)
+
+    group_var = StringVar()
+    group_var.set("Group")
+
+    group_title = tk.Label(container, text="Group:", font=("Helvetica", 16))
+    group_title.grid(row=9, column=0, pady=10, padx=5)
+
+    individual_title = tk.Label(container, text="Individual:", font=("Helvetica", 16))
+    individual_title.grid(row=9, column=1, pady=10, padx=5)
+
+    group = Radiobutton(container, text="Group", variable=group_var, value="Group", command=clicked)
+    group.grid(row=10, column=0, pady=10, padx=5)
+
+    team_name_label = tk.Label(container, text="Team Name:", font=("Helvetica", 16))
+    team_name_label.grid(row=11, column=0, pady=10, padx=5)
+
+    individual = Radiobutton(container, text="Individual", variable=group_var, value="Individual", command=clicked)
+    individual.grid(row=10, column=1, pady=10, padx=5)
+
+    teamnames = ["Team name 1", 
+                 "Team name 2", 
+                 "Team name 3", 
+                 "Team name 4"]
+
+    dropdown = tk.OptionMenu(container, group_var, value=teamnames)
+    dropdown.grid(row=12, column=0, pady=10, padx=5)
+
 
 #-------------Buttons-------------
 home_button = tk.Button(screen, text="Home", command = show_home_page)

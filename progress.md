@@ -275,6 +275,31 @@ game_play_display.grid(row=2, pady=5, column=3, padx=15, sticky="n")
 - What needs improvement?
 - What did I learn?
 
+## Session [05]
+**Date:** 14 April 2026  
+**Time spent:** 1 hour  
+**Focus:** Refactor home and sign-up pages: adjust layout, improve alignment, and add participant input fields for first name, last name, and year group.
+
+### Problems / Challenges
+- 
+- 
+
+### Solutions / Actions Taken
+- 
+- 
+
+### Evidence
+- Added code: The homepage code into the main code (nothing new added)
+- [Updated design] 
+- [Created sketch]
+- [Researched source]
+- [Uploaded image/screenshot]
+
+### Reflection
+- What went well?
+- What needs improvement?
+- What did I learn?
+
 # 7. Problems and Fixes
 
 | Problem | Cause | Fix | Status |
