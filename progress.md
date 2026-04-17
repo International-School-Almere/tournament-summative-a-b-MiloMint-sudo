@@ -354,7 +354,7 @@ game_play_display.grid(row=2, pady=5, column=3, padx=15, sticky="n")
 ## Session [08]
 **Date:** 17 April 2026  
 **Time spent:** 1 hour  
-**Focus:** 
+**Focus:** Add Treeview for participant data display: implement columns for first name, last name, year group, sport, and academic subjects.
 
 ### Problems / Challenges
 - 
@@ -401,7 +401,7 @@ game_play_display.grid(row=2, pady=5, column=3, padx=15, sticky="n")
     for record in data: 
         my_tree.insert(parent='', index='end', iid=count, text="", values=(record[0], record[1], record[2], record[3], record[4], record[5]))
         count += 1
-        
+
 - [Updated design] 
 - [Created sketch]
 - [Researched source]
