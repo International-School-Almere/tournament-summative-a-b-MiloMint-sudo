@@ -1,7 +1,9 @@
 #main file for the Tournament App.
 import tkinter as tk 
+import tkinter as ttk 
 import os 
 from tkinter import Label, Radiobutton, StringVar, messagebox
+import json
 #-------------GUI-------------
 screen = tk.Tk()
 screen.title("Ron's College Tournament App")
@@ -60,6 +62,43 @@ def show_participant_page():
     participant_page = tk.Label(container, text="Participants", font=("Helvetica", 20))
     participant_page.grid(pady=20, column=1, padx=25, sticky="n")
     participant_page.config(anchor="center")
+
+    #------Treeview------
+    my_tree = ttk.Treeview(container)
+
+    #Define our columns 
+    my_tree['Columns'] = ("First Name", "Last Name", "Year Group", "Sport", "Academic")
+    
+    #Formate our columns
+    my_tree.column("#0", width=0, stretch=tk.NO)
+    my_tree.column("First Name", anchor="w")
+    my_tree.column("Last Name", anchor="w")
+    my_tree.column("Year Group", anchor="center")
+    my_tree.column("Sport", anchor="w")
+    my_tree.column("Academic", anchor="w")
+
+    #Create headings
+    my_tree.heading("#0", text="", anchor="w")
+    my_tree.heading("First Name", text="First Name", anchor="w")
+    my_tree.heading("Last Name", text="Last Name", anchor="w")
+    my_tree.heading("Year Group", text="Year Group", anchor="center")
+    my_tree.heading("Sport", text="Sport", anchor="w")
+    my_tree.heading("Academic", text="Academic", anchor="w")
+
+    #Add data
+    
+    data = [
+        ('John', 'Smith', 'Year 10', 'Basketball', ''),
+        ('Jane', 'Doe', 'Year 11', 'Soccer', ''),
+        ('Jim', 'Beam', 'Year 12', '', 'Maths'),
+        ('Lana', 'Joens', 'Year 4', '', 'Physics')
+    ]
+
+    count=0 
+    for record in data: 
+        my_tree.insert(parent='', index='end', iid=count, text="", values=(record[0], record[1], record[2], record[3], record[4], record[5]))
+        count += 1
+
 
 def show_sign_up_page():
     

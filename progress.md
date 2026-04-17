@@ -351,6 +351,93 @@ game_play_display.grid(row=2, pady=5, column=3, padx=15, sticky="n")
 - What needs improvement?
 - What did I learn?
 
+## Session [08]
+**Date:** 17 April 2026  
+**Time spent:** 1 hour  
+**Focus:** 
+
+### Problems / Challenges
+- 
+- 
+
+### Solutions / Actions Taken
+- 
+- 
+
+### Evidence
+- Added code: 
+#------Treeview------
+    my_tree = ttk.Treeview(container)
+
+    #Define our columns 
+    my_tree['Columns'] = ("First Name", "Last Name", "Year Group", "Sport", "Academic")
+    
+    #Formate our columns
+    my_tree.column("#0", width=0, stretch=tk.NO)
+    my_tree.column("First Name", anchor="w")
+    my_tree.column("Last Name", anchor="w")
+    my_tree.column("Year Group", anchor="center")
+    my_tree.column("Sport", anchor="w")
+    my_tree.column("Academic", anchor="w")
+
+    #Create headings
+    my_tree.heading("#0", text="", anchor="w")
+    my_tree.heading("First Name", text="First Name", anchor="w")
+    my_tree.heading("Last Name", text="Last Name", anchor="w")
+    my_tree.heading("Year Group", text="Year Group", anchor="center")
+    my_tree.heading("Sport", text="Sport", anchor="w")
+    my_tree.heading("Academic", text="Academic", anchor="w")
+
+    #Add data
+    
+    data = [
+        ('John', 'Smith', 'Year 10', 'Basketball', ''),
+        ('Jane', 'Doe', 'Year 11', 'Soccer', ''),
+        ('Jim', 'Beam', 'Year 12', '', 'Maths'),
+        ('Lana', 'Joens', 'Year 4', '', 'Physics')
+    ]
+
+    count=0 
+    for record in data: 
+        my_tree.insert(parent='', index='end', iid=count, text="", values=(record[0], record[1], record[2], record[3], record[4], record[5]))
+        count += 1
+        
+- [Updated design] 
+- [Created sketch]
+- [Researched source]
+- [Uploaded image/screenshot]
+
+### Reflection
+- What went well?
+- What needs improvement?
+- What did I learn?
+
+## Session [09]
+**Date:**  April 2026  
+**Time spent:**   
+**Focus:** 
+
+### Problems / Challenges
+- 
+- 
+
+### Solutions / Actions Taken
+- 
+- 
+
+### Evidence
+- Added code: 
+
+- [Updated design] 
+- [Created sketch]
+- [Researched source]
+- [Uploaded image/screenshot]
+
+### Reflection
+- What went well?
+- What needs improvement?
+- What did I learn?
+
 # 7. Problems and Fixes
 
 | Problem | Cause | Fix | Status |
