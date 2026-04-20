@@ -96,7 +96,7 @@ def show_participant_page():
 
     count=0 
     for record in data: 
-        my_tree.insert(parent='', index='end', iid=count, text="", values=(record[0], record[1], record[2], record[3], record[4], record[5]))
+        my_tree.insert(parent='', index='end', iid=count, text="", values=(record[0], record[1], record[2], record[3], record[4],))
         count += 1
 
 

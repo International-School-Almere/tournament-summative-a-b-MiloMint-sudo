@@ -1,3 +1,9 @@
 [
-    {}
+    {
+        "First Name": "",
+        "Last Name": "",
+        "Year Group": "",
+        "Sport": "",
+        "Academic": ""
+    }
 ]
