@@ -413,20 +413,74 @@ game_play_display.grid(row=2, pady=5, column=3, padx=15, sticky="n")
 - What did I learn?
 
 ## Session [09]
-**Date:**  April 2026  
-**Time spent:**   
-**Focus:** 
+**Date:**  21 April 2026  
+**Time spent:** 55 minutes   
+**Focus:** Implement participant sign-up functionality: add participant data saving and loading, enhance sign-up page with dropdowns for year group and team name.
 
 ### Problems / Challenges
-- 
+- Didn't know how to put all the data into a json file
 - 
 
 ### Solutions / Actions Taken
-- 
+- Youtube tutorial
 - 
 
 ### Evidence
 - Added code: 
+PARTICIPANTS_FILE = "participants.json"
+  def load_participants():
+        if os.path.exists(PARTICIPANTS_FILE):
+            try: 
+                with open(PARTICIPANTS_FILE, "r") as file:
+                    return json.load(file)
+            except json.JSONDecodeError:
+                return []
+            return []
+
+    def save_participants(participants_data):
+        participants = load_participants()
+        participants.extend(participants_data)
+        with open(PARTICIPANTS_FILE, "w") as file:
+            json.dump(participants, file)
+
+    def save_signup():
+        participant_data = {
+            "year_group": year_group_entry.get().strip(),
+            "first_name": name_entry.get().strip(),
+            "last_name": last_name_entry.get().strip(),
+            "event": event_var.get(),
+            "entry_type": participation_var.get(),
+            "team_name": team_var.get() if participation_var.get() == "Group" else ""
+        }
+
+        if not participant_data["year_group"] or not participant_data["first_name"] or not participant_data["last_name"] or not participant_data["event"]:
+            messagebox.showerror("Error", "Please fill in the year group, first name, last name, and event.")
+            return
+
+        if participant_data["entry_type"] == "Group" and not participant_data["team_name"]:
+            messagebox.showerror("Error", "Please select a team.")
+            return
+
+        save_participants([participant_data])
+        messagebox.showinfo("Saved", "Participant saved successfully.")
+
+    participant_year_group = ["MYP 1a","MYP 1b","MYP 1c", 
+                              "MYP 2a","MYP 2b","MYP 2c", 
+                              "MYP 3a","MYP 3b","MYP 3c", 
+                              "MYP 4a","MYP 4b","MYP 4c", 
+                              "MYP 5a","MYP 5b","MYP 5c", 
+                              "DP1", "DP2", "CP1", "CP2"]
+
+    participant_year_group_var = StringVar()
+    participant_year_group_var.set(participant_year_group[0])
+
+    participant_year_group_title = tk.Label(container, text="Year Group:", font=("Helvetica", 16))
+    participant_year_group_title.grid(row=1, column=0, pady=10, padx=5)
+
+    year_group_dropdown = tk.OptionMenu(container, participant_year_group_var, *participant_year_group)
+    year_group_dropdown.grid(row=1, column=1, pady=10, padx=5)
+save_button = tk.Button(container, text="Submit", command=save_signup)
+save_button.grid(row=13, column=1, pady=20, padx=5)
 
 - [Updated design] 
 - [Created sketch]
