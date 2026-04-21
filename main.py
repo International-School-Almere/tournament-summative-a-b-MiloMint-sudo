@@ -4,6 +4,7 @@ import tkinter as ttk
 import os 
 from tkinter import Label, Radiobutton, StringVar, messagebox
 import json
+PARTICIPANTS_FILE = "participants.json"
 #-------------GUI-------------
 screen = tk.Tk()
 screen.title("Ron's College Tournament App")
@@ -96,7 +97,7 @@ def show_participant_page():
 
     count=0 
     for record in data: 
-        my_tree.insert(parent='', index='end', iid=count, text="", values=(record[0], record[1], record[2], record[3], record[4],))
+        my_tree.insert(parent='', index='end', iid=count, text="", values=(record[0], record[1], record[2], record[3], record[4]))
         count += 1
 
 
@@ -104,6 +105,42 @@ def show_sign_up_page():
     
     def clicked():
         my_label.config(text=f'You selected event is: {event_var.get()}.')
+
+    def load_participants():
+        if os.path.exists(PARTICIPANTS_FILE):
+            try: 
+                with open(PARTICIPANTS_FILE, "r") as file:
+                    return json.load(file)
+            except json.JSONDecodeError:
+                return []
+            return []
+
+    def save_participants(participants_data):
+        participants = load_participants()
+        participants.extend(participants_data)
+        with open(PARTICIPANTS_FILE, "w") as file:
+            json.dump(participants, file)
+
+    def save_signup():
+        participant_data = {
+            "year_group": year_group_entry.get().strip(),
+            "first_name": name_entry.get().strip(),
+            "last_name": last_name_entry.get().strip(),
+            "event": event_var.get(),
+            "entry_type": participation_var.get(),
+            "team_name": team_var.get() if participation_var.get() == "Group" else ""
+        }
+
+        if not participant_data["year_group"] or not participant_data["first_name"] or not participant_data["last_name"] or not participant_data["event"]:
+            messagebox.showerror("Error", "Please fill in the year group, first name, last name, and event.")
+            return
+
+        if participant_data["entry_type"] == "Group" and not participant_data["team_name"]:
+            messagebox.showerror("Error", "Please select a team.")
+            return
+
+        save_participants([participant_data])
+        messagebox.showinfo("Saved", "Participant saved successfully.")
 
     for widget in container.winfo_children():
         widget.destroy()
@@ -113,10 +150,22 @@ def show_sign_up_page():
     sign_up_page.grid(pady=20, column=1, padx=25,)
     sign_up_page.config(anchor="center")
 
-    participant_year_group = tk.Label(container, text="Year Group:", font=("Helvetica", 16))
-    participant_year_group.grid(row=1, column=0, pady=10, padx=5)
-    year_group_entry = tk.Entry(container, font=("Helvetica", 16))
-    year_group_entry.grid(row=1, column=1, pady=10, padx=5)
+
+    participant_year_group = ["MYP 1a","MYP 1b","MYP 1c", 
+                              "MYP 2a","MYP 2b","MYP 2c", 
+                              "MYP 3a","MYP 3b","MYP 3c", 
+                              "MYP 4a","MYP 4b","MYP 4c", 
+                              "MYP 5a","MYP 5b","MYP 5c", 
+                              "DP1", "DP2", "CP1", "CP2"]
+
+    participant_year_group_var = StringVar()
+    participant_year_group_var.set(participant_year_group[0])
+
+    participant_year_group_title = tk.Label(container, text="Year Group:", font=("Helvetica", 16))
+    participant_year_group_title.grid(row=1, column=0, pady=10, padx=5)
+
+    year_group_dropdown = tk.OptionMenu(container, participant_year_group_var, *participant_year_group)
+    year_group_dropdown.grid(row=1, column=1, pady=10, padx=5)
 
     participant_name = tk.Label(container, text="First Name:", font=("Helvetica", 16))
     participant_name.grid(row=2, column=0, pady=10, padx=5)
@@ -128,6 +177,7 @@ def show_sign_up_page():
     last_name_entry = tk.Entry(container, font=("Helvetica", 16))
     last_name_entry.grid(row=3, column=1, pady=10, padx=5)
 
+    #------Event type------
     event_var = StringVar()
     event_var.set("Basketball")
 
@@ -158,8 +208,9 @@ def show_sign_up_page():
     my_label = Label(container, text="", font=("Helvetica", 16))
     my_label.grid(row=8, column=1, pady=10)
 
-    group_var = StringVar()
-    group_var.set("Group")
+    #-------Participation Type--------
+    participation_var = StringVar()
+    participation_var.set("Group")
 
     group_title = tk.Label(container, text="Group:", font=("Helvetica", 16))
     group_title.grid(row=9, column=0, pady=10, padx=5)
@@ -167,23 +218,26 @@ def show_sign_up_page():
     individual_title = tk.Label(container, text="Individual:", font=("Helvetica", 16))
     individual_title.grid(row=9, column=1, pady=10, padx=5)
 
-    group = Radiobutton(container, text="Group", variable=group_var, value="Group", command=clicked)
+    group = Radiobutton(container, text="Group", variable=participation_var, value="Group", command=clicked)
     group.grid(row=10, column=0, pady=10, padx=5)
 
     team_name_label = tk.Label(container, text="Team Name:", font=("Helvetica", 16))
     team_name_label.grid(row=11, column=0, pady=10, padx=5)
 
-    individual = Radiobutton(container, text="Individual", variable=group_var, value="Individual", command=clicked)
+    individual = Radiobutton(container, text="Individual", variable=participation_var, value="Individual", command=clicked)
     individual.grid(row=10, column=1, pady=10, padx=5)
 
-    teamnames = ["Team name 1", 
-                 "Team name 2", 
-                 "Team name 3", 
-                 "Team name 4"]
+    #------Teams------
+    teamnames = ["Team name 1", "Team name 2", "Team name 3", "Team name 4"]
 
-    dropdown = tk.OptionMenu(container, group_var, value=teamnames)
+    team_var = StringVar()
+    team_var.set(teamnames[0])
+
+    dropdown = tk.OptionMenu(container, team_var, *teamnames)
     dropdown.grid(row=12, column=0, pady=10, padx=5)
 
+    save_button = tk.Button(container, text="Submit", command=save_signup)
+    save_button.grid(row=13, column=1, pady=20, padx=5)
 
 #-------------Buttons-------------
 home_button = tk.Button(screen, text="Home", command = show_home_page)
