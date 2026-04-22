@@ -19,15 +19,49 @@ container = tk.Frame(screen)
 container.configure(bg="white")
 container.grid(row=1, column=0, columnspan=6)
 
+#------------Share functions--------
+def clear_container():
+    for widget in container.winfo_children():
+        widget.destroy()
+
+def load_participants():
+        if os.path.exists(PARTICIPANTS_FILE):
+            try: 
+                with open(PARTICIPANTS_FILE, "r") as file:
+                    return json.load(file)
+            except json.JSONDecodeError:
+                return []
+            return []
+        
+def save_participants(participants_data):
+    participants = load_participants()
+    participants.extend(participants_data)
+    with open(PARTICIPANTS_FILE, "w") as file:
+        json.dump(participants, file)
+
+#------------Year groups-----------
+participant_year_group = ["MYP 1a","MYP 1b","MYP 1c", 
+                              "MYP 2a","MYP 2b","MYP 2c", 
+                              "MYP 3a","MYP 3b","MYP 3c", 
+                              "MYP 4a","MYP 4b","MYP 4c", 
+                              "MYP 5a","MYP 5b","MYP 5c", 
+                              "DP1", "DP2", "CP1", "CP2"]
+
+#------------Team Names-----------
+teamnames = ["Team name 1", "Team name 2", "Team name 3", "Team name 4"]
+
+#-----------Home page---------- 
 def show_home_page():
     for widget in container.winfo_children():
         widget.destroy()
     container.columnconfigure(0, weight=1)
 
+    #----Title----
     Home_page_title = tk.Label(container, text="Ron's college 2026 Sports and Academic Tournament", font=("Helvetica", 20))
     Home_page_title.grid(pady=15, column=0, columnspan=4, padx=25)
     Home_page_title.config(anchor="center")
 
+    #----Tournament Rules----
     rules_text_title = tk.Label(container, text="Tournament Rules", font=("Helvetica", 21))
     rules_text_title.grid(row=1, column=1, pady=10, padx=10)
     rules_text_title.config(anchor="center")
@@ -37,6 +71,7 @@ def show_home_page():
     rules_display.grid(row=2, pady=5, column=1, padx=15)
     rules_display.config(anchor="center")
 
+    #----How the games will work----
     game_play_title = tk.Label(container, text="How the games will work", font=("Helvetica", 21), wraplength=170)
     game_play_title.grid(row=1, column=2, pady=10, padx=10)
     game_play_title.config(anchor="center")
@@ -46,6 +81,8 @@ def show_home_page():
     game_play_display.grid(row=2, pady=5, column=2, padx=15)
     game_play_display.config(anchor="center")
 
+#------------Leaderboard Page------------
+
 def show_leaderboard_page():
     for widget in container.winfo_children():
         widget.destroy()
@@ -54,6 +91,8 @@ def show_leaderboard_page():
     Leaderboard_page = tk.Label(container, text="Leaderboard", font=("Helvetica", 20))
     Leaderboard_page.grid(pady=20, column=1, padx=25, sticky="n")
     Leaderboard_page.config(anchor="center")
+
+#------------Participant Page------------
 
 def show_participant_page():
     for widget in container.winfo_children():
@@ -87,43 +126,31 @@ def show_participant_page():
     my_tree.heading("Academic", text="Academic", anchor="w")
 
     #Add data
-    
-    data = [
-        ('John', 'Smith', 'Year 10', 'Basketball', ''),
-        ('Jane', 'Doe', 'Year 11', 'Soccer', ''),
-        ('Jim', 'Beam', 'Year 12', '', 'Maths'),
-        ('Lana', 'Joens', 'Year 4', '', 'Physics')
-    ]
+    participants = load_participants()
+    for participant in participants:
+        my_tree.insert(parent='', index='end', iid=participant['id'], text="", values=(
+            participant['first_name'],
+            participant['last_name'],
+            participant['year_group'],
+            participant['event'],
+            participant['team_name']
+        ))
 
-    count=0 
-    for record in data: 
-        my_tree.insert(parent='', index='end', iid=count, text="", values=(record[0], record[1], record[2], record[3], record[4]))
+    count=0
+    for record in participants:
+        my_tree.insert(parent='', index='end', iid=count, text="", values=(record['first_name'], record['last_name'], record['year_group'], record['event'], record['entry_type'], record['team_name']))
         count += 1
 
+#------------Sign Up Page------------
 
 def show_sign_up_page():
     
     def clicked():
         my_label.config(text=f'You selected event is: {event_var.get()}.')
 
-    def load_participants():
-        if os.path.exists(PARTICIPANTS_FILE):
-            try: 
-                with open(PARTICIPANTS_FILE, "r") as file:
-                    return json.load(file)
-            except json.JSONDecodeError:
-                return []
-            return []
-
-    def save_participants(participants_data):
-        participants = load_participants()
-        participants.extend(participants_data)
-        with open(PARTICIPANTS_FILE, "w") as file:
-            json.dump(participants, file)
-
     def save_signup():
         participant_data = {
-            "year_group": year_group_entry.get().strip(),
+            "year_group": participant_year_group_var.get().strip(),
             "first_name": name_entry.get().strip(),
             "last_name": last_name_entry.get().strip(),
             "event": event_var.get(),
@@ -146,43 +173,55 @@ def show_sign_up_page():
         widget.destroy()
     container.columnconfigure(0, weight=1)
 
-    sign_up_page = tk.Label(container, text="Sign Up", font=("Helvetica", 20))
-    sign_up_page.grid(pady=20, column=1, padx=25,)
-    sign_up_page.config(anchor="center")
+    def titles(): 
+        sign_up_page = tk.Label(container, text="Sign Up", font=("Helvetica", 20))
+        sign_up_page.grid(pady=20, column=1, padx=25,)
+        sign_up_page.config(anchor="center")
+        
+        participant_year_group_title = tk.Label(container, text="Year Group:", font=("Helvetica", 16))
+        participant_year_group_title.grid(row=1, column=0, pady=10, padx=5)
+        
+        participant_name = tk.Label(container, text="First Name:", font=("Helvetica", 16))
+        participant_name.grid(row=2, column=0, pady=10, padx=5)
+        
+        participant_last_name = tk.Label(container, text="Last Name:", font=("Helvetica", 16))
+        participant_last_name.grid(row=3, column=0, pady=10, padx=5)
+        
+        sports_title = tk.Label(container, text="Select a sport:", font=("Helvetica", 16))
+        sports_title.grid(row=4, column=0, pady=10, padx=5)
+        
+        academic_title = tk.Label(container, text="Select an academic event:", font=("Helvetica", 16))
+        academic_title.grid(row=4, column=1, pady=10, padx=5)
 
+        group_title = tk.Label(container, text="Group:", font=("Helvetica", 16))
+        group_title.grid(row=9, column=0, pady=10, padx=5)
 
-    participant_year_group = ["MYP 1a","MYP 1b","MYP 1c", 
-                              "MYP 2a","MYP 2b","MYP 2c", 
-                              "MYP 3a","MYP 3b","MYP 3c", 
-                              "MYP 4a","MYP 4b","MYP 4c", 
-                              "MYP 5a","MYP 5b","MYP 5c", 
-                              "DP1", "DP2", "CP1", "CP2"]
+        individual_title = tk.Label(container, text="Individual:", font=("Helvetica", 16))
+        individual_title.grid(row=9, column=1, pady=10, padx=5)
+
+        team_name_label = tk.Label(container, text="Team Name:", font=("Helvetica", 16))
+        team_name_label.grid(row=11, column=0, pady=10, padx=5)
+
+    titles()
+
+    my_label = Label(container, text="", font=("Helvetica", 16))
+    my_label.grid(row=8, column=1, pady=10)
 
     participant_year_group_var = StringVar()
     participant_year_group_var.set(participant_year_group[0])
 
-    participant_year_group_title = tk.Label(container, text="Year Group:", font=("Helvetica", 16))
-    participant_year_group_title.grid(row=1, column=0, pady=10, padx=5)
-
     year_group_dropdown = tk.OptionMenu(container, participant_year_group_var, *participant_year_group)
     year_group_dropdown.grid(row=1, column=1, pady=10, padx=5)
-
-    participant_name = tk.Label(container, text="First Name:", font=("Helvetica", 16))
-    participant_name.grid(row=2, column=0, pady=10, padx=5)
+    
     name_entry = tk.Entry(container, font=("Helvetica", 16))
     name_entry.grid(row=2, column=1, pady=10, padx=5)
-
-    participant_last_name = tk.Label(container, text="Last Name:", font=("Helvetica", 16))
-    participant_last_name.grid(row=3, column=0, pady=10, padx=5)
+    
     last_name_entry = tk.Entry(container, font=("Helvetica", 16))
     last_name_entry.grid(row=3, column=1, pady=10, padx=5)
 
     #------Event type------
     event_var = StringVar()
     event_var.set("Basketball")
-
-    sports_title = tk.Label(container, text="Select a sport:", font=("Helvetica", 16))
-    sports_title.grid(row=4, column=0, pady=10, padx=5)
 
     sport1 = Radiobutton(container, text="Basketball", variable=event_var, value="Basketball", command=clicked)
     sport1.grid(pady=10, column=0, padx=5, row=5)
@@ -193,9 +232,6 @@ def show_sign_up_page():
     sport3 = Radiobutton(container, text="Tennis", variable=event_var, value="Tennis", command=clicked)
     sport3.grid(pady=10, column=0, padx=5, row=7)
 
-    academic_title = tk.Label(container, text="Select an academic event:", font=("Helvetica", 16))
-    academic_title.grid(row=4, column=1, pady=10, padx=5)
-
     academic1 = Radiobutton(container, text="Maths", variable=event_var, value="Maths", command=clicked)
     academic1.grid(pady=10, column=1, padx=5, row=5)
 
@@ -205,31 +241,17 @@ def show_sign_up_page():
     academic3 = Radiobutton(container, text="History", variable=event_var, value="History", command=clicked)
     academic3.grid(pady=10, column=1, padx=5, row=7)
 
-    my_label = Label(container, text="", font=("Helvetica", 16))
-    my_label.grid(row=8, column=1, pady=10)
-
     #-------Participation Type--------
     participation_var = StringVar()
     participation_var.set("Group")
 
-    group_title = tk.Label(container, text="Group:", font=("Helvetica", 16))
-    group_title.grid(row=9, column=0, pady=10, padx=5)
-
-    individual_title = tk.Label(container, text="Individual:", font=("Helvetica", 16))
-    individual_title.grid(row=9, column=1, pady=10, padx=5)
-
     group = Radiobutton(container, text="Group", variable=participation_var, value="Group", command=clicked)
     group.grid(row=10, column=0, pady=10, padx=5)
-
-    team_name_label = tk.Label(container, text="Team Name:", font=("Helvetica", 16))
-    team_name_label.grid(row=11, column=0, pady=10, padx=5)
 
     individual = Radiobutton(container, text="Individual", variable=participation_var, value="Individual", command=clicked)
     individual.grid(row=10, column=1, pady=10, padx=5)
 
     #------Teams------
-    teamnames = ["Team name 1", "Team name 2", "Team name 3", "Team name 4"]
-
     team_var = StringVar()
     team_var.set(teamnames[0])
 
