@@ -1,10 +1,11 @@
 #main file for the Tournament App.
 import tkinter as tk 
-import tkinter as ttk 
+from tkinter import ttk 
 import os 
 from tkinter import Label, Radiobutton, StringVar, messagebox
 import json
 PARTICIPANTS_FILE = "participants.json"
+LEADERBOARD_FILE = "leaderboard.json"
 #-------------GUI-------------
 screen = tk.Tk()
 screen.title("Ron's College Tournament App")
@@ -20,18 +21,28 @@ container.configure(bg="white")
 container.grid(row=1, column=0, columnspan=6)
 
 #------------Share functions--------
+def load_json_list(path):
+    if not os.path.exists(path):
+        return []
+    try:
+        with open(path, "r", encoding="utf-8") as file:
+            data = json.load(file)
+            return data if isinstance(data, list) else []
+    except (json.JSONDecodeError, OSError):
+        return []
+
 def clear_container():
     for widget in container.winfo_children():
         widget.destroy()
 
 def load_participants():
-        if os.path.exists(PARTICIPANTS_FILE):
-            try: 
-                with open(PARTICIPANTS_FILE, "r") as file:
-                    return json.load(file)
-            except json.JSONDecodeError:
-                return []
+    if os.path.exists(PARTICIPANTS_FILE):
+        try:
+            with open(PARTICIPANTS_FILE, "r") as file:
+                return json.load(file)
+        except json.JSONDecodeError:
             return []
+    return []
         
 def save_participants(participants_data):
     participants = load_participants()
@@ -92,6 +103,8 @@ def show_leaderboard_page():
     Leaderboard_page.grid(pady=20, column=1, padx=25, sticky="n")
     Leaderboard_page.config(anchor="center")
 
+
+
 #------------Participant Page------------
 
 def show_participant_page():
@@ -107,7 +120,7 @@ def show_participant_page():
     my_tree = ttk.Treeview(container)
 
     #Define our columns 
-    my_tree['Columns'] = ("First Name", "Last Name", "Year Group", "Sport", "Academic")
+    my_tree["columns"] = ("First Name", "Last Name", "Year Group", "Event", "Team Name")
     
     #Formate our columns
     my_tree.column("#0", width=0, stretch=tk.NO)
@@ -122,24 +135,27 @@ def show_participant_page():
     my_tree.heading("First Name", text="First Name", anchor="w")
     my_tree.heading("Last Name", text="Last Name", anchor="w")
     my_tree.heading("Year Group", text="Year Group", anchor="center")
-    my_tree.heading("Sport", text="Sport", anchor="w")
-    my_tree.heading("Academic", text="Academic", anchor="w")
+    my_tree.heading("Event", text="Event", anchor="w")
+    my_tree.heading("Team Name", text="Team Name", anchor="w")
 
     #Add data
     participants = load_participants()
-    for participant in participants:
-        my_tree.insert(parent='', index='end', iid=participant['id'], text="", values=(
-            participant['first_name'],
-            participant['last_name'],
-            participant['year_group'],
-            participant['event'],
-            participant['team_name']
-        ))
+    for count, participant in enumerate(participants):
+        my_tree.insert(
+            parent="",
+            index="end",
+            iid=count,
+            text="",
+            values=(
+                participant.get("first_name", ""),
+                participant.get("last_name", ""),
+                participant.get("year_group", ""),
+                participant.get("event", ""),
+                participant.get("team_name", "")
+            )
+        )
 
-    count=0
-    for record in participants:
-        my_tree.insert(parent='', index='end', iid=count, text="", values=(record['first_name'], record['last_name'], record['year_group'], record['event'], record['entry_type'], record['team_name']))
-        count += 1
+    my_tree.grid(row=1, column=0, columnspan=2, padx=20, pady=20)
 
 #------------Sign Up Page------------
 
