@@ -492,6 +492,31 @@ save_button.grid(row=13, column=1, pady=20, padx=5)
 - What needs improvement?
 - What did I learn?
 
+## Session [10]
+**Date:**  7 May 2026  
+**Time spent:** 30 minutes   
+**Focus:** 
+
+### Problems / Challenges
+- 
+- 
+
+### Solutions / Actions Taken
+- 
+- 
+
+### Evidence
+- Added code: 
+- [Updated design] 
+- [Created sketch]
+- [Researched source]
+- [Uploaded image/screenshot]
+
+### Reflection
+- What went well?
+- What needs improvement?
+- What did I learn?
+
 # 7. Problems and Fixes
 
 | Problem | Cause | Fix | Status |

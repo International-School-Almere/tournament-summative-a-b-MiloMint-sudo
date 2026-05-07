@@ -31,6 +31,27 @@ def load_json_list(path):
     except (json.JSONDecodeError, OSError):
         return []
 
+def default_leaderboard():
+    return [
+        {"team_name": team_name, "played": 0, "wins": 0, "draws": 0, "losses": 0, "points": 0}
+        for team_name in teamnames
+    ]
+
+def save_json_list(path, data):
+    with open(path, "w", encoding="utf-8") as file:
+        json.dump(data, file, indent=2)
+
+def load_leaderboard():
+    leaderboard = load_json_list(LEADERBOARD_FILE)
+    if leaderboard:
+        return leaderboard
+    leaderboard = default_leaderboard()
+    save_json_list(LEADERBOARD_FILE, leaderboard)
+    return leaderboard
+
+def save_leaderboard(leaderboard):
+    save_json_list(LEADERBOARD_FILE, leaderboard)
+
 def clear_container():
     for widget in container.winfo_children():
         widget.destroy()
@@ -77,7 +98,7 @@ def show_home_page():
     rules_text_title.grid(row=1, column=1, pady=10, padx=10)
     rules_text_title.config(anchor="center")
 
-    rules_text = "1. Respect all participants\n2. Follow the rules\n3. Have fun!"
+    rules_text = "TEST: 1.Respect all participants\n2. Follow the rules\n3. Have fun!"
     rules_display = tk.Label(container, text=rules_text, font=("Helvetica", 16), justify="left", wraplength=200)
     rules_display.grid(row=2, pady=5, column=1, padx=15)
     rules_display.config(anchor="center")
@@ -87,7 +108,7 @@ def show_home_page():
     game_play_title.grid(row=1, column=2, pady=10, padx=10)
     game_play_title.config(anchor="center")
 
-    game_play = "blah blah blah"
+    game_play = "TEST: Each game will consist of two teams competing against each other.\n The team with the most points at the end of the game wins.\n Points are awarded based on performance in various events, including sports and academics."
     game_play_display = tk.Label(container, text=game_play, font=("Helvetica", 16), justify="left", wraplength=200)
     game_play_display.grid(row=2, pady=5, column=2, padx=15)
     game_play_display.config(anchor="center")
@@ -103,7 +124,73 @@ def show_leaderboard_page():
     Leaderboard_page.grid(pady=20, column=1, padx=25, sticky="n")
     Leaderboard_page.config(anchor="center")
 
+    leaderboard_tree = ttk.Treeview(container, columns=("Team", "Played", "Wins", "Draws", "Losses", "Points"), show="headings")
+    leaderboard_tree.heading("Team", text="Team")
+    leaderboard_tree.heading("Played", text="Played")
+    leaderboard_tree.heading("Wins", text="Wins")
+    leaderboard_tree.heading("Draws", text="Draws")
+    leaderboard_tree.heading("Losses", text="Losses")
+    leaderboard_tree.heading("Points", text="Points")
+    leaderboard_tree.grid(row=1, column=0, columnspan=2, padx=20, pady=20)
 
+    for heading, width in zip(leaderboard_tree["columns"], (180, 90, 90, 90, 90, 100)):
+        leaderboard_tree.column(heading, width=width)
+
+    def refresh_leaderboard():
+        for row_id in leaderboard_tree.get_children():
+            leaderboard_tree.delete(row_id)
+
+    leaderboard = sorted(load_leaderboard(), key=lambda team: (-team["points"], -team["wins"], team["team_name"]))
+    for index, team in enumerate(leaderboard):
+        leaderboard_tree.insert( "", "end", iid=index, values=(team["team_name"], team["played"], team["wins"], team["draws"], team["losses"], team["points"],))
+
+    controls_frame = ttk.Frame(container)
+    controls_frame.grid(row=2, column=0, columnspan=2, pady=20)
+
+    controls_title = ttk.Label(controls_frame, text="Update Scores", font=("Helvetica", 16))
+    controls_title.grid(row=0, column=0, columnspan=2)
+
+    selected_team_var = tk.StringVar(value=teamnames[0])
+    result_var = tk.StringVar(value="Win")
+
+    tk.Label(controls_frame, text="Team Name:", font=("Helvetica", 14), bg="white").grid(row=1, column=0, pady=10, padx=5)
+
+    tk.OptionMenu(controls_frame, selected_team_var, *teamnames).grid(row=1, column=1, pady=10, padx=5)
+
+    tk.Label(controls_frame, text="Result:", font=("Helvetica", 14), bg="white").grid(row=2, column=0, pady=10, padx=5)
+
+    tk.OptionMenu(controls_frame, result_var, "Win", "Draw", "Loss").grid(row=2, column=1, pady=10, padx=5)
+
+    info_text = "Win = 3 points\nDraw = 1 point\nLoss = 0 points"
+    tk.Label(controls_frame, text=info_text, font=("Helvetica", 12), bg="white").grid(row=3, column=0, columnspan=2)
+
+    def update_scores():
+        leaderboard = load_leaderboard()
+        team_name = selected_team_var.get()
+        result = result_var.get()
+
+        team_record = next((team for team in leaderboard if team["team_name"] == team_name), None)
+        if team_record is None:
+            messagebox.showerror("Error", "That team could not be found.")
+            return
+
+        team_record["played"] += 1
+        if result == "Win":
+            team_record["wins"] += 1
+            team_record["points"] += 3
+        elif result == "Draw":
+            team_record["draws"] += 1
+            team_record["points"] += 1
+        else:
+            team_record["losses"] += 1
+
+        save_leaderboard(leaderboard)
+        refresh_leaderboard()
+        messagebox.showinfo("Updated", f"Scores updated for {team_name}.")
+
+        tk.Button(controls_frame, text="Add Result", command=update_scores).grid(row=4, column=0, columnspan=2, pady=15)
+
+    refresh_leaderboard()
 
 #------------Participant Page------------
 
@@ -117,52 +204,30 @@ def show_participant_page():
     participant_page.config(anchor="center")
 
     #------Treeview------
-    my_tree = ttk.Treeview(container)
+    my_tree = ttk.Treeview(container, columns=("First Name", "Last Name", "Year Group", "Event", "Team Name"), show="headings")
 
-    #Define our columns 
-    my_tree["columns"] = ("First Name", "Last Name", "Year Group", "Event", "Team Name")
-    
-    #Formate our columns
     my_tree.column("#0", width=0, stretch=tk.NO)
-    my_tree.column("First Name", anchor="w")
-    my_tree.column("Last Name", anchor="w")
-    my_tree.column("Year Group", anchor="center")
-    my_tree.column("Sport", anchor="w")
-    my_tree.column("Academic", anchor="w")
+    my_tree.grid(row=1, column=0, columnspan=2, padx=20, pady=20)
 
-    #Create headings
-    my_tree.heading("#0", text="", anchor="w")
-    my_tree.heading("First Name", text="First Name", anchor="w")
-    my_tree.heading("Last Name", text="Last Name", anchor="w")
-    my_tree.heading("Year Group", text="Year Group", anchor="center")
-    my_tree.heading("Event", text="Event", anchor="w")
-    my_tree.heading("Team Name", text="Team Name", anchor="w")
+    for heading, width in zip(my_tree["columns"], (150, 150, 110, 130, 110, 150)):
+        my_tree.heading(heading, text=heading)
+        my_tree.column(heading, width=width, anchor="w")
 
-    #Add data
     participants = load_participants()
     for count, participant in enumerate(participants):
-        my_tree.insert(
-            parent="",
-            index="end",
-            iid=count,
-            text="",
-            values=(
-                participant.get("first_name", ""),
-                participant.get("last_name", ""),
-                participant.get("year_group", ""),
-                participant.get("event", ""),
-                participant.get("team_name", "")
-            )
-        )
+        my_tree.insert(parent="", index="end", iid=count,values=(participant.get("first_name", ""),participant.get("last_name", ""),participant.get("year_group", ""),participant.get("event", ""),participant.get("entry_type", ""),participant.get("team_name", "")))
+        my_tree.grid(row=1, column=0, columnspan=2, padx=20, pady=20)
 
-    my_tree.grid(row=1, column=0, columnspan=2, padx=20, pady=20)
 
 #------------Sign Up Page------------
 
 def show_sign_up_page():
     
     def clicked():
-        my_label.config(text=f'You selected event is: {event_var.get()}.')
+        selected_type = participation_var.get()
+        selected_event = event_var.get()
+        selected_team = team_var.get() if selected_type == "Group" else "N/A"
+        my_label.config(text=f'Selected Event: {selected_event}.', text=f'Entry Type: {selected_type}.', text=f'Team Name: {selected_team}.')
 
     def save_signup():
         participant_data = {
