@@ -5,15 +5,15 @@
     "wins": 0,
     "draws": 0,
     "losses": 0,
-    "points": 3
+    "points": 0
   },
   {
     "team_name": "Team name 2",
-    "played": 0,
+    "played": 10,
     "wins": 0,
     "draws": 0,
     "losses": 0,
-    "points": 0
+    "points": 5
   },
   {
     "team_name": "Team name 3",
@@ -21,14 +21,14 @@
     "wins": 0,
     "draws": 0,
     "losses": 0,
-    "points": 3
+    "points": 0
   },
   {
     "team_name": "Team name 4",
-    "played": 0,
+    "played": 1,
     "wins": 0,
     "draws": 0,
     "losses": 0,
-    "points": 0
+    "points": 25
   }
 ]

@@ -1,0 +1,12 @@
+[
+  {
+    "participant_name": "Lisa Smith",
+    "event": "Maths",
+    "points": 76
+  },
+  {
+    "participant_name": "Lenard Kreg",
+    "event": "Physics",
+    "points": 97
+  }
+]

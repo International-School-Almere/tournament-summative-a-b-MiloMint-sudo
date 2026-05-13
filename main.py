@@ -6,6 +6,7 @@ from tkinter import Label, Radiobutton, StringVar, messagebox
 import json
 PARTICIPANTS_FILE = "participants.json"
 LEADERBOARD_FILE = "leaderboard.json"
+LEADERBOARD_INDIVIDUAL_FILE = "leaderboard_individual.json"
 #-------------GUI-------------
 screen = tk.Tk()
 screen.title("Ron's College Tournament App")
@@ -33,9 +34,76 @@ def load_json_list(path):
 
 def default_leaderboard():
     return [
-        {"team_name": team_name, "played": 0, "wins": 0, "draws": 0, "losses": 0, "points": 0}
+        {"team_name": team_name, "played": 0, "points": 0}
         for team_name in teamnames
     ]
+
+def default_individual_leaderboard():
+    return [
+        {"participant_name": participant_name, "event": event_var, "points": 0}
+        for participant_name in load_participants()
+        for event_var in ["Maths", "Physics", "History"]
+    ]
+
+def get_individual_entries():
+    entries = []
+    seen = set()
+    academic_events = {"Maths", "Physics", "History"}
+
+    for participant in load_participants():
+        full_name = f"{participant.get('first_name', '').strip()} {participant.get('last_name', '').strip()}".strip()
+        event_name = participant.get("event", "").strip()
+        entry_type = participant.get("entry_type", "").strip()
+
+        if not full_name or not event_name:
+            continue
+
+        if event_name not in academic_events:
+            continue
+
+        if entry_type != "Individual":
+            continue
+
+        key = (full_name, event_name)
+        if key in seen:
+            continue
+
+        seen.add(key)
+        entries.append(
+            {
+                "participant_name": full_name,
+                "event": event_name,
+                "points": 0,
+            }
+        )
+
+    return entries
+    
+def load_individual_leaderboard():
+    saved_rows = load_json_list(LEADERBOARD_INDIVIDUAL_FILE)
+    saved_lookup = {
+        (row.get("participant_name", ""), row.get("event", "")): row
+        for row in saved_rows
+    }
+    
+    merged_rows = []
+    for entry in get_individual_entries():
+        key = (entry["participant_name"], entry["event"])
+        merged_rows.append(saved_lookup.get(key, entry))
+
+    if saved_rows != merged_rows:
+        save_json_list(LEADERBOARD_INDIVIDUAL_FILE, merged_rows)
+
+    return merged_rows
+
+def save_individual_leaderboard(individual_leaderboard):
+    save_json_list(LEADERBOARD_INDIVIDUAL_FILE, individual_leaderboard)
+
+def get_sorted_individual_leaderboard():
+    return sorted(
+        load_individual_leaderboard(),
+        key=lambda row: (-row["points"], row["event"], row["participant_name"]),
+    )
 
 def save_json_list(path, data):
     with open(path, "w", encoding="utf-8") as file:
@@ -113,36 +181,48 @@ def show_home_page():
     game_play_display.grid(row=2, pady=5, column=2, padx=15)
     game_play_display.config(anchor="center")
 
-#------------Leaderboard Page------------
+#------------Team Leaderboard Page------------
 
 def show_leaderboard_page():
     for widget in container.winfo_children():
         widget.destroy()
     container.columnconfigure(0, weight=1)
 
-    Leaderboard_page = tk.Label(container, text="Leaderboard", font=("Helvetica", 20))
+    Leaderboard_page = tk.Label(container, text="Team Leaderboard", font=("Helvetica", 20))
     Leaderboard_page.grid(pady=20, column=1, padx=25, sticky="n")
     Leaderboard_page.config(anchor="center")
 
-    leaderboard_tree = ttk.Treeview(container, columns=("Team", "Played", "Wins", "Draws", "Losses", "Points"), show="headings")
+    leaderboard_tree = ttk.Treeview(container, columns=("Team", "Played", "Points"), show="headings")
     leaderboard_tree.heading("Team", text="Team")
     leaderboard_tree.heading("Played", text="Played")
-    leaderboard_tree.heading("Wins", text="Wins")
-    leaderboard_tree.heading("Draws", text="Draws")
-    leaderboard_tree.heading("Losses", text="Losses")
     leaderboard_tree.heading("Points", text="Points")
     leaderboard_tree.grid(row=1, column=0, columnspan=2, padx=20, pady=20)
 
-    for heading, width in zip(leaderboard_tree["columns"], (180, 90, 90, 90, 90, 100)):
+    for heading, width in zip(leaderboard_tree["columns"], (180, 90, 90)):
         leaderboard_tree.column(heading, width=width)
 
     def refresh_leaderboard():
         for row_id in leaderboard_tree.get_children():
             leaderboard_tree.delete(row_id)
+        
+        leaderboard = sorted(
+        load_leaderboard(),
+        key=lambda team: (-team["points"], -team["played"], team["team_name"]))
+        for index, team in enumerate(leaderboard):
+            leaderboard_tree.insert(
+            "",
+            "end",
+            iid=index,
+            values=(
+                team["team_name"],
+                team["played"],
+                team["points"],
+            ),
+        )
 
-    leaderboard = sorted(load_leaderboard(), key=lambda team: (-team["points"], -team["wins"], team["team_name"]))
+    leaderboard = sorted(load_leaderboard(), key=lambda team: (-team["points"], -team["played"], team["team_name"]))
     for index, team in enumerate(leaderboard):
-        leaderboard_tree.insert( "", "end", iid=index, values=(team["team_name"], team["played"], team["wins"], team["draws"], team["losses"], team["points"],))
+        leaderboard_tree.insert( "", "end", iid=index, values=(team["team_name"], team["played"], team["points"],))
 
     controls_frame = ttk.Frame(container)
     controls_frame.grid(row=2, column=0, columnspan=2, pady=20)
@@ -151,18 +231,22 @@ def show_leaderboard_page():
     controls_title.grid(row=0, column=0, columnspan=2)
 
     selected_team_var = tk.StringVar(value=teamnames[0])
-    result_var = tk.StringVar(value="Win")
+    played_var = tk.StringVar(value="0")
     points_var = tk.StringVar(value="0")
 
     tk.Label(controls_frame, text="Team Name:", font=("Helvetica", 14)).grid(row=1, column=0, pady=10, padx=5)
 
     tk.OptionMenu(controls_frame, selected_team_var, *teamnames).grid(row=1, column=1, pady=10, padx=5)
 
-    tk.Label(controls_frame, text="Add points:", font=("Helvetica", 14)).grid(row=2, column=0, pady=10, padx=5)
+    tk.Label(controls_frame, text="Add Games Played:", font=("Helvetica", 14)).grid(row=2, column=0, padx=5, pady=8, sticky="e")
+    
+    tk.Entry(controls_frame, textvariable=played_var, font=("Helvetica", 14), width=10).grid(row=2, column=1, padx=5, pady=8, sticky="w")
 
-    tk.Entry(controls_frame, textvariable=points_var, font=("Helvetica", 14)).grid(row=2, column=1, pady=10, padx=5)
+    tk.Label(controls_frame, text="Add points:", font=("Helvetica", 14)).grid(row=3, column=0, pady=10, padx=5)
 
-    tk.Label(controls_frame, text="Use positive points to add score or negative points to remove score.", font=("Helvetica", 12)).grid(row=3, column=0, columnspan=2)
+    tk.Entry(controls_frame, textvariable=points_var, font=("Helvetica", 14)).grid(row=3, column=1, pady=10, padx=5)
+
+    tk.Label(controls_frame, text="Use positive or negative whole numbers to adjust games played and points.", font=("Helvetica", 12)).grid(row=4, column=0, columnspan=2)
 
     def find_team_record(leaderboard, team_name):
         return next((team for team in leaderboard if team["team_name"] == team_name), None)
@@ -176,56 +260,145 @@ def show_leaderboard_page():
             messagebox.showerror("Error", "That team could not be found.")
             return
         try:
+            games_to_add = int(played_var.get().strip())
+            points_to_add = int(points_var.get().strip())
+        except ValueError:
+            messagebox.showerror("Error", "Please enter whole numbers for games played and points.")
+            return
+
+        team_record["played"] += games_to_add
+        team_record["points"] += points_to_add
+
+        if team_record["played"] < 0: 
+            team_record["played"] = 0
+      
+        if team_record["points"] < 0:
+            team_record["points"] = 0
+ 
+        save_leaderboard(leaderboard)
+        refresh_leaderboard()
+        played_var.set("0")
+        points_var.set("0")
+        messagebox.showinfo("Updated", f"{team_name} was updated successfully.")
+
+    tk.Button(controls_frame, text="Apply Changes", command=update_points).grid(row=5, column=0, columnspan=2, pady=(0, 18))
+
+    tk.Label(controls_frame, text="Example: add `1` game played and `3` points after a match.",font=("Helvetica", 12), wraplength=260,).grid(row=6, column=0, columnspan=2, pady=10)
+
+    refresh_leaderboard()
+
+#------------Individual Leaderboard Page------------
+
+def show_individual_leaderboard_page():
+    for widget in container.winfo_children():
+        widget.destroy()
+    container.columnconfigure(0, weight=1)
+
+    Ind_Leaderboard_page = tk.Label(container, text="Individual Leaderboard", font=("Helvetica", 20))
+    Ind_Leaderboard_page.grid(pady=20, column=1, padx=25, sticky="n")
+    Ind_Leaderboard_page.config(anchor="center")
+
+    Ind_leaderboard_tree = ttk.Treeview(container, columns=("Participant", "Event", "Points"), show="headings")
+    Ind_leaderboard_tree.heading("Participant", text="Participant")
+    Ind_leaderboard_tree.heading("Event", text="Event")
+    Ind_leaderboard_tree.heading("Points", text="Points")
+    Ind_leaderboard_tree.grid(row=1, column=0, columnspan=2, padx=20, pady=20)
+
+    for heading, width in zip(Ind_leaderboard_tree["columns"], (180, 90, 90)):
+        Ind_leaderboard_tree.column(heading, width=width)
+
+    def refresh_individual_leaderboard():
+        for row_id in Ind_leaderboard_tree.get_children():
+            Ind_leaderboard_tree.delete(row_id)
+
+        individual_rows = sorted(
+            load_individual_leaderboard(),
+            key=lambda row: (-row["points"], row["event"], row["participant_name"])
+        )
+
+        for index, row in enumerate(individual_rows):
+            Ind_leaderboard_tree.insert(
+                "",
+                "end",
+                iid=index,
+                values=(
+                    row["participant_name"],
+                    row["event"],
+                    row["points"],
+                ),
+            )
+
+    controls_frame_Ind = ttk.Frame(container)
+    controls_frame_Ind.grid(row=2, column=0, columnspan=2, pady=20)
+
+    controls_title_Ind = ttk.Label(controls_frame_Ind, text="Admin Score Controls", font=("Helvetica", 16))
+    controls_title_Ind.grid(row=0, column=0, columnspan=2)
+
+    individual_rows = load_individual_leaderboard()
+
+    if not individual_rows:
+        tk.Label(controls_frame_Ind, text="Add participants first to create the individual leaderboard.", font=("Helvetica", 12), wraplength=260,).grid(row=1, column=0, columnspan=2, pady=10)
+        refresh_individual_leaderboard()
+        return
+
+    participant_names = sorted({row["participant_name"] for row in individual_rows})
+    event_names = sorted({row["event"] for row in individual_rows})
+
+    selected_participant_var = StringVar(value=participant_names[0])
+    selected_event_var = StringVar(value=event_names[0])
+    points_var = StringVar(value="0")
+
+    tk.Label(controls_frame_Ind, text="Participant:", font=("Helvetica", 14)).grid(row=1, column=0, pady=10, padx=5)
+
+    tk.OptionMenu(controls_frame_Ind, selected_participant_var, *participant_names).grid(row=1, column=1, pady=10, padx=5)
+
+    tk.Label(controls_frame_Ind, text="Event:", font=("Helvetica", 14)).grid(row=2, column=0, padx=5, pady=8, sticky="e")
+
+    tk.OptionMenu(controls_frame_Ind, selected_event_var, *event_names).grid(row=2, column=1, padx=5, pady=8, sticky="w")
+
+    tk.Label(controls_frame_Ind, text="Add points:", font=("Helvetica", 14)).grid(row=3, column=0, pady=10, padx=5)
+
+    tk.Entry(controls_frame_Ind, textvariable=points_var, font=("Helvetica", 14)).grid(row=3, column=1, pady=10, padx=5)
+
+    tk.Label(controls_frame_Ind, text="Use positive points to add score or negative points to remove score.", font=("Helvetica", 12)).grid(row=4, column=0, columnspan=2)
+
+    def update_individual_points():
+        individual_leaderboard = load_individual_leaderboard()
+        participant_name = selected_participant_var.get()
+        event_name = selected_event_var.get()
+
+        row = next(
+            (
+                item
+                for item in individual_leaderboard
+                if item["participant_name"] == participant_name and item["event"] == event_name
+            ),
+            None,
+        )
+        if row is None:
+            messagebox.showerror("Error", "That participant entry could not be found.")
+            return
+
+        try:
             points_to_add = int(points_var.get().strip())
         except ValueError:
             messagebox.showerror("Error", "Please enter a whole number for points.")
             return
 
-        team_record["points"] += points_to_add
-        if team_record["points"] < 0:
-            team_record["points"] = 0
+        row["points"] += points_to_add
+        if row["points"] < 0:
+            row["points"] = 0
 
-        save_leaderboard(leaderboard)
-        refresh_leaderboard()
+        save_individual_leaderboard(individual_leaderboard)
+        refresh_individual_leaderboard()
         points_var.set("0")
-        messagebox.showinfo("Updated", f"{points_to_add} point(s) applied to {team_name}.")
+        messagebox.showinfo("Updated", f"{participant_name} was updated successfully.")
 
-    tk.Button(controls_frame, text="Apply Points", command=update_points).grid(row=4, column=0, columnspan=2, pady=(0, 18))
+    tk.Button(controls_frame_Ind, text="Apply Changes", command=update_individual_points).grid(row=5, column=0, columnspan=2, pady=(0, 18))
 
-    tk.Label(controls_frame, text="Result:", font=("Helvetica", 14)).grid(row=5, column=0, pady=10, padx=5)
+    tk.Label(controls_frame_Ind, text="Choose the participant and event, then add the points for that result.", font=("Helvetica", 12), wraplength=260).grid(row=6, column=0, columnspan=2, pady=10)
 
-    tk.OptionMenu(controls_frame, result_var, "Win", "Draw", "Loss").grid(row=5, column=1, pady=10, padx=5)
-
-    info_text = "Win = 3 points\nDraw = 1 point\nLoss = 0 points"
-    tk.Label(controls_frame, text=info_text, font=("Helvetica", 12), justify="left").grid(row=6, column=0, columnspan=2, pady=10)
-
-    def update_scores():
-        leaderboard = load_leaderboard()
-        team_name = selected_team_var.get()
-        result = result_var.get()
-
-        team_record = find_team_record(leaderboard, team_name)
-        if team_record is None:
-            messagebox.showerror("Error", "That team could not be found.")
-            return
-
-        team_record["played"] += 1
-        if result == "Win":
-            team_record["wins"] += 1
-            team_record["points"] += 3
-        elif result == "Draw":
-            team_record["draws"] += 1
-            team_record["points"] += 1
-        else:
-            team_record["losses"] += 1
-
-        save_leaderboard(leaderboard)
-        refresh_leaderboard()
-        messagebox.showinfo("Updated", f"Scores updated for {team_name}.")
-
-        tk.Button(controls_frame, text="Add Result", command=update_scores).grid(row=4, column=0, columnspan=2, pady=15)
-
-    refresh_leaderboard()
+    refresh_individual_leaderboard()
 
 #------------Participant Page------------
 
@@ -259,10 +432,8 @@ def show_participant_page():
 def show_sign_up_page():
     
     def clicked():
-        selected_type = participation_var.get()
         selected_event = event_var.get()
-        selected_team = team_var.get() if selected_type == "Group" else "N/A"
-        my_label.config(text=f'Selected Event: {selected_event}, Entry Type: {selected_type}, Team Name: {selected_team}.')
+        my_label.config(text=f'Selected Event: {selected_event}')
 
     def save_signup():
         participant_data = {
@@ -379,7 +550,8 @@ def show_sign_up_page():
 
 #-------------Buttons-------------
 home_button = tk.Button(screen, text="Home", command = show_home_page)
-leaderboard_button = tk.Button(screen, text="Leaderboard", command=show_leaderboard_page)
+leaderboard_button = tk.Button(screen, text="Team Leaderboard", command=show_leaderboard_page)
+Ind_leaderboard_button = tk.Button(screen, text="Individual Leaderboard", command=show_individual_leaderboard_page)
 participant_button = tk.Button(screen, text="Participants", command=show_participant_page)
 sign_up_button = tk.Button(screen, text="Sign Up", command=show_sign_up_page)
 
@@ -388,12 +560,15 @@ screen.columnconfigure(1, weight=0)
 screen.columnconfigure(2, weight=0)
 screen.columnconfigure(3, weight=0)
 screen.columnconfigure(4, weight=0)
-screen.columnconfigure(5, weight=1)
+screen.columnconfigure(5, weight=0)
+screen.columnconfigure(6, weight=0)
+screen.columnconfigure(7, weight=1)
 
 home_button.grid(row=0, column=1, padx=10, pady=10)
 leaderboard_button.grid(row=0, column=2, padx=10, pady=10)
-participant_button.grid(row=0, column=3, padx=10, pady=10)
-sign_up_button.grid(row=0, column=4, padx=10, pady=10)
+Ind_leaderboard_button.grid(row=0, column=3, padx=10, pady=10)
+participant_button.grid(row=0, column=4, padx=10, pady=10)
+sign_up_button.grid(row=0, column=5, padx=10, pady=10)
 
 show_home_page()
 
