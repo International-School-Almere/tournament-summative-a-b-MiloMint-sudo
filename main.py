@@ -377,38 +377,23 @@ def show_sign_up_page():
     save_button = tk.Button(container, text="Submit", command=save_signup)
     save_button.grid(row=13, column=1, pady=20, padx=5)
 
-#-------------Events page-------------
-def show_events_page():
-    for widget in container.winfo_children():
-        widget.destroy()
-    container.columnconfigure(0, weight=1)
-
-    events_page = tk.Label(container, text="Events", font=("Helvetica", 20))
-    events_page.grid(pady=20, column=1, padx=25,)
-    events_page.config(anchor="center")
-
-    
-
 #-------------Buttons-------------
 home_button = tk.Button(screen, text="Home", command = show_home_page)
 leaderboard_button = tk.Button(screen, text="Leaderboard", command=show_leaderboard_page)
 participant_button = tk.Button(screen, text="Participants", command=show_participant_page)
 sign_up_button = tk.Button(screen, text="Sign Up", command=show_sign_up_page)
-events_button = tk.Button(screen, text="Events", command=show_events_page)
 
 screen.columnconfigure(0, weight=1)
 screen.columnconfigure(1, weight=0) 
 screen.columnconfigure(2, weight=0)
 screen.columnconfigure(3, weight=0)
 screen.columnconfigure(4, weight=0)
-screen.columnconfigure(5, weight=0)
-screen.columnconfigure(6, weight=1)
+screen.columnconfigure(5, weight=1)
 
 home_button.grid(row=0, column=1, padx=10, pady=10)
 leaderboard_button.grid(row=0, column=2, padx=10, pady=10)
 participant_button.grid(row=0, column=3, padx=10, pady=10)
 sign_up_button.grid(row=0, column=4, padx=10, pady=10)
-events_button.grid(row=0, column=5, padx=10, pady=10)
 
 show_home_page()
 

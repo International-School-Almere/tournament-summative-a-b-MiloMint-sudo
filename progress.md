@@ -74,6 +74,7 @@ screen.mainloop()"
 
 ### Reflection
 - What went well?
+    Creating the pages and putting all the imports went well, quick and easy
 - What needs improvement?
 - What did I learn?
 
@@ -202,11 +203,12 @@ def sign_up():
 
 ### Reflection
 - What went well?
+    Was able to learn about radio buttons quickly
 - What needs improvement?
+    It wasn't showing in my code quiet yet, so I need to be able to code it so it shows in the code itself. 
 - What did I learn?
     I learnt about radio buttons from a youtube tutorial. 
 
----
 
 ## Session [04]
 **Date:** 7 April 2026  
@@ -214,7 +216,7 @@ def sign_up():
 **Focus:** Designing the Homepage Dashboard and Information Hierarchy.
 
 ### Problems / Challenges
-- 
+- Nada
 - 
 
 ### Solutions / Actions Taken
@@ -247,8 +249,11 @@ game_play_display.grid(row=2, pady=5, column=3, padx=15, sticky="n")
 
 ### Reflection
 - What went well?
+    Was easily able to add the labels without any tutorials, just pure knowledge
 - What needs improvement?
+    I could have put them into a def so it would all be in one place 
 - What did I learn?
+
 
 ## Session [05]
 **Date:** 10 April 2026  
@@ -272,8 +277,11 @@ game_play_display.grid(row=2, pady=5, column=3, padx=15, sticky="n")
 
 ### Reflection
 - What went well?
+    My solution worked well because my code finally started showing the home page.
 - What needs improvement?
+    I need to learn how to use pathways to connect different codes to one main python file.
 - What did I learn?
+    Not everything I try works.
 
 ## Session [06]
 **Date:** 14 April 2026  
@@ -306,11 +314,11 @@ game_play_display.grid(row=2, pady=5, column=3, padx=15, sticky="n")
 **Focus:** Refactor sign-up page: improve layout, add event selection options, and include team name dropdown.
 
 ### Problems / Challenges
-- 
+- The radio buttons were acting strange (they would work but it wasnt in the place I wanted them to be)
 - 
 
 ### Solutions / Actions Taken
-- 
+- I asked the teacher to help me in which he helped a bit, but I also used a youtube tutorial to help me. 
 - 
 
 ### Evidence
@@ -357,11 +365,11 @@ game_play_display.grid(row=2, pady=5, column=3, padx=15, sticky="n")
 **Focus:** Add Treeview for participant data display: implement columns for first name, last name, year group, sport, and academic subjects.
 
 ### Problems / Challenges
-- 
+- The treeview didn't show when I wanted it to
 - 
 
 ### Solutions / Actions Taken
-- 
+- I did some research and asked chatgpt to explain to me why it was not showing. Then I changed the code so it would work out. 
 - 
 
 ### Evidence
@@ -409,8 +417,11 @@ game_play_display.grid(row=2, pady=5, column=3, padx=15, sticky="n")
 
 ### Reflection
 - What went well?
+    I understood the code I was writing, however it didn't work...
 - What needs improvement?
+    I need to first check if it works, so maybe adjust the code if needed so it would work.
 - What did I learn?
+    I learnt how to create a tree view (but like I said it didn't work)
 
 ## Session [09]
 **Date:**  21 April 2026  
@@ -489,24 +500,28 @@ save_button.grid(row=13, column=1, pady=20, padx=5)
 
 ### Reflection
 - What went well?
+    What went was was I was able to add the code without too many issues and it worked as expected.
 - What needs improvement?
+    How its organised, could have put it into seperate def groups so it wouldn't be so messy
 - What did I learn?
+    I learnt how to properly use a json file so i can transfer information from one place to another.
 
 ## Session [10]
-**Date:**  7 May 2026  
-**Time spent:** 30 minutes   
-**Focus:** 
+**Date:**  12 May 2026  
+**Time spent:** 1 hour  
+**Focus:** Checking final bugs and adjusting code 
 
 ### Problems / Challenges
-- 
+- One of the inputs was acting strange
 - 
 
 ### Solutions / Actions Taken
-- 
+- Adjusted the code so it would stop giving me an error. 
 - 
 
 ### Evidence
 - Added code: 
+ my_label.config(text=f'Selected Event: {selected_event}, Entry Type: {selected_type}, Team Name: {selected_team}.')
 - [Updated design] 
 - [Created sketch]
 - [Researched source]
@@ -514,8 +529,11 @@ save_button.grid(row=13, column=1, pady=20, padx=5)
 
 ### Reflection
 - What went well?
+    What went well was I was able to quickly figure out why it wasn't working and changed it smoothly.
 - What needs improvement?
+    The speed at which I find an error like this. (Honestly took me too long to figure out why the code wasn't working as I wanted it to.)
 - What did I learn?
+    Always double check if the code works properly before claiming it works. 
 
 # 7. Problems and Fixes
 
@@ -531,27 +549,28 @@ save_button.grid(row=13, column=1, pady=20, padx=5)
 > Complete this section at the end of the project.
 
 ## What I achieved
-- 
-- 
-- 
+- Built a Persistent Data System using JSON, ensuring participant registrations aren't lost when the app closes.
+- Developed a functional multi-page GUI using Python’s Tkinter library.
+- Created a Dynamic Leaderboard that allows admins to update scores for both sports and academic events.
+- Implemented a Treeview UI to display participant lists in a professional, spreadsheet-like format.
 
 ## What worked well
-- 
-- 
+- Modular Code: Breaking the pages into separate functions (show_home_page, show_sign_up_page) made the code easier to debug and navigate.
+- Validation: Adding logic to check if fields were empty before saving prevented the JSON file from becoming corrupted with "blank" participants.
 - 
 
 ## What did not work well
-- 
-- 
+- Style and UX: While functional, the UI uses default Tkinter colors. I would love to implement a custom theme or more images/logos to make it look like a modern app. 
+- Error Handling: I would add more "Try/Except" blocks to handle cases where the JSON file might be accidentally deleted or moved.
 - 
 
 ## What I would improve next time
-- 
+- Login and Permission Levels:To make the app more secure for a real tournament, I would add a Login System. This would ensure that only authorized judges (Admins) can access the "Leaderboard Controls" to change scores, while regular students can only view the leaderboard and sign up for events.
 - 
 - 
 
 ## Final outcome
-[Describe the final result]
+The final result of this project is a fully functional, multi-page desktop application built with Python and Tkinter. The software serves as a centralized management system for school-wide events, replacing manual spreadsheets with a structured digital interface.
 
 ## Did I meet the success criteria (designspecifications)?
 - [ ] Criterion 1
@@ -559,7 +578,7 @@ save_button.grid(row=13, column=1, pady=20, padx=5)
 - [ ] Criterion 3
 
 ## Final evaluation
-[Write a short final judgment of the project]
+The Tournament App successfully met the primary goal of digitizing the scoring process for a large-scale school event. By moving away from manual spreadsheets to a Python-based JSON system, I reduced the risk of data entry errors and created a more professional interface for both participants and judges. Despite initial challenges with UI layout and data pathways, the final product is a reliable, functional tool that demonstrates a strong grasp of GUI development and data persistence.
 
 ---
 - 
