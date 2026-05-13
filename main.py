@@ -147,29 +147,64 @@ def show_leaderboard_page():
     controls_frame = ttk.Frame(container)
     controls_frame.grid(row=2, column=0, columnspan=2, pady=20)
 
-    controls_title = ttk.Label(controls_frame, text="Update Scores", font=("Helvetica", 16))
+    controls_title = ttk.Label(controls_frame, text="Admin Score Controls", font=("Helvetica", 16))
     controls_title.grid(row=0, column=0, columnspan=2)
 
     selected_team_var = tk.StringVar(value=teamnames[0])
     result_var = tk.StringVar(value="Win")
+    points_var = tk.StringVar(value="0")
 
-    tk.Label(controls_frame, text="Team Name:", font=("Helvetica", 14), bg="white").grid(row=1, column=0, pady=10, padx=5)
+    tk.Label(controls_frame, text="Team Name:", font=("Helvetica", 14)).grid(row=1, column=0, pady=10, padx=5)
 
     tk.OptionMenu(controls_frame, selected_team_var, *teamnames).grid(row=1, column=1, pady=10, padx=5)
 
-    tk.Label(controls_frame, text="Result:", font=("Helvetica", 14), bg="white").grid(row=2, column=0, pady=10, padx=5)
+    tk.Label(controls_frame, text="Add points:", font=("Helvetica", 14)).grid(row=2, column=0, pady=10, padx=5)
 
-    tk.OptionMenu(controls_frame, result_var, "Win", "Draw", "Loss").grid(row=2, column=1, pady=10, padx=5)
+    tk.Entry(controls_frame, textvariable=points_var, font=("Helvetica", 14)).grid(row=2, column=1, pady=10, padx=5)
+
+    tk.Label(controls_frame, text="Use positive points to add score or negative points to remove score.", font=("Helvetica", 12)).grid(row=3, column=0, columnspan=2)
+
+    def find_team_record(leaderboard, team_name):
+        return next((team for team in leaderboard if team["team_name"] == team_name), None)
+    
+    def update_points():
+        leaderboard = load_leaderboard()
+        team_name = selected_team_var.get()
+        team_record = find_team_record(leaderboard, team_name)
+
+        if team_record is None:
+            messagebox.showerror("Error", "That team could not be found.")
+            return
+        try:
+            points_to_add = int(points_var.get().strip())
+        except ValueError:
+            messagebox.showerror("Error", "Please enter a whole number for points.")
+            return
+
+        team_record["points"] += points_to_add
+        if team_record["points"] < 0:
+            team_record["points"] = 0
+
+        save_leaderboard(leaderboard)
+        refresh_leaderboard()
+        points_var.set("0")
+        messagebox.showinfo("Updated", f"{points_to_add} point(s) applied to {team_name}.")
+
+    tk.Button(controls_frame, text="Apply Points", command=update_points).grid(row=4, column=0, columnspan=2, pady=(0, 18))
+
+    tk.Label(controls_frame, text="Result:", font=("Helvetica", 14)).grid(row=5, column=0, pady=10, padx=5)
+
+    tk.OptionMenu(controls_frame, result_var, "Win", "Draw", "Loss").grid(row=5, column=1, pady=10, padx=5)
 
     info_text = "Win = 3 points\nDraw = 1 point\nLoss = 0 points"
-    tk.Label(controls_frame, text=info_text, font=("Helvetica", 12), bg="white").grid(row=3, column=0, columnspan=2)
+    tk.Label(controls_frame, text=info_text, font=("Helvetica", 12), justify="left").grid(row=6, column=0, columnspan=2, pady=10)
 
     def update_scores():
         leaderboard = load_leaderboard()
         team_name = selected_team_var.get()
         result = result_var.get()
 
-        team_record = next((team for team in leaderboard if team["team_name"] == team_name), None)
+        team_record = find_team_record(leaderboard, team_name)
         if team_record is None:
             messagebox.showerror("Error", "That team could not be found.")
             return
@@ -209,7 +244,7 @@ def show_participant_page():
     my_tree.column("#0", width=0, stretch=tk.NO)
     my_tree.grid(row=1, column=0, columnspan=2, padx=20, pady=20)
 
-    for heading, width in zip(my_tree["columns"], (150, 150, 110, 130, 110, 150)):
+    for heading, width in zip(my_tree["columns"], (150, 150, 110, 130, 150)):
         my_tree.heading(heading, text=heading)
         my_tree.column(heading, width=width, anchor="w")
 
@@ -227,7 +262,7 @@ def show_sign_up_page():
         selected_type = participation_var.get()
         selected_event = event_var.get()
         selected_team = team_var.get() if selected_type == "Group" else "N/A"
-        my_label.config(text=f'Selected Event: {selected_event}.', text=f'Entry Type: {selected_type}.', text=f'Team Name: {selected_team}.')
+        my_label.config(text=f'Selected Event: {selected_event}, Entry Type: {selected_type}, Team Name: {selected_team}.')
 
     def save_signup():
         participant_data = {
@@ -342,23 +377,38 @@ def show_sign_up_page():
     save_button = tk.Button(container, text="Submit", command=save_signup)
     save_button.grid(row=13, column=1, pady=20, padx=5)
 
+#-------------Events page-------------
+def show_events_page():
+    for widget in container.winfo_children():
+        widget.destroy()
+    container.columnconfigure(0, weight=1)
+
+    events_page = tk.Label(container, text="Events", font=("Helvetica", 20))
+    events_page.grid(pady=20, column=1, padx=25,)
+    events_page.config(anchor="center")
+
+    
+
 #-------------Buttons-------------
 home_button = tk.Button(screen, text="Home", command = show_home_page)
 leaderboard_button = tk.Button(screen, text="Leaderboard", command=show_leaderboard_page)
 participant_button = tk.Button(screen, text="Participants", command=show_participant_page)
 sign_up_button = tk.Button(screen, text="Sign Up", command=show_sign_up_page)
+events_button = tk.Button(screen, text="Events", command=show_events_page)
 
 screen.columnconfigure(0, weight=1)
-screen.columnconfigure(1, weight=0)
+screen.columnconfigure(1, weight=0) 
 screen.columnconfigure(2, weight=0)
 screen.columnconfigure(3, weight=0)
 screen.columnconfigure(4, weight=0)
-screen.columnconfigure(5, weight=1)
+screen.columnconfigure(5, weight=0)
+screen.columnconfigure(6, weight=1)
 
 home_button.grid(row=0, column=1, padx=10, pady=10)
 leaderboard_button.grid(row=0, column=2, padx=10, pady=10)
 participant_button.grid(row=0, column=3, padx=10, pady=10)
 sign_up_button.grid(row=0, column=4, padx=10, pady=10)
+events_button.grid(row=0, column=5, padx=10, pady=10)
 
 show_home_page()
 
